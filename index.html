@@ -1,80 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #222;
-        }
-        canvas {
-            border: 2px solid white;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake — Three.js Edition</title>
+  <link rel="stylesheet" href="Styles/Main.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
-    <canvas id="gameCanvas" width="1515" height="850"></canvas>
-    <script>
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
 
-        const box = 20;
-        let snake = [{ x: 10 * box, y: 10 * box }];
-        let food = {
-            x: Math.floor(Math.random() * 20) * box,
-            y: Math.floor(Math.random() * 20) * box
-        };
-        let direction = "RIGHT";
+  <div id="Hud">
+    <div id="ScoreDisplay">
+      <span class="Lbl">SCORE</span>
+      <span id="ScoreVal">0</span>
+    </div>
+    <div id="BestDisplay">
+      <span class="Lbl">BEST</span>
+      <span id="BestVal">0</span>
+    </div>
+    <div id="LevelDisplay">
+      <span class="Lbl">LEVEL</span>
+      <span id="LevelVal">1</span>
+    </div>
+    <div id="ComboDisplay">x2 COMBO!</div>
+    <div id="ProgressWrap">
+      <div id="ProgressLabel">0 / 5 TO LEVEL 2</div>
+      <div id="ProgressBarBg"><div id="ProgressBarFill"></div></div>
+    </div>
+    <div id="LevelUpMsg">LEVEL UP!</div>
+  </div>
 
-        document.addEventListener("keydown", changeDirection);
-        function changeDirection(event) {
-            if (event.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
-            else if (event.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
-            else if (event.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
-            else if (event.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
-        }
+  <div class="Screen" id="StartScreen">
+    <div class="GameTitle">SNAKE</div>
+    <div class="Subtitle">Three.js Edition</div>
+    <div class="PressStart">Press Space or Click to Start</div>
+    <div class="ControlsHint">WASD / ARROW KEYS TO MOVE | SPACE TO PAUSE</div>
+  </div>
 
-        function drawGame() {
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = "red";
-            ctx.fillRect(food.x, food.y, box, box);
-            
-            ctx.fillStyle = "lime";
-            snake.forEach(part => ctx.fillRect(part.x, part.y, box, box));
+  <div class="Screen" id="PauseScreen" style="display:none">
+    <div style="font-size:clamp(3rem,10vw,6rem);font-weight:900;letter-spacing:12px;color:#ffee00;text-shadow:0 0 12px #ffee00,0 0 30px #ffee0088;">PAUSED</div>
+    <div class="PressStart" style="margin-top:40px">Press Space to Resume</div>
+  </div>
 
-            let newHead = { x: snake[0].x, y: snake[0].y };
-            if (direction === "UP") newHead.y -= box;
-            else if (direction === "DOWN") newHead.y += box;
-            else if (direction === "LEFT") newHead.x -= box;
-            else if (direction === "RIGHT") newHead.x += box;
+  <div class="Screen" id="GameoverScreen">
+    <div class="GoTitle" data-text="GAME OVER">GAME OVER</div>
+    <div class="GoScoreWrap">
+      <div class="GoLbl">SCORE</div>
+      <div class="GoScoreVal" id="GoScoreVal">0</div>
+      <div class="GoLbl" style="margin-top:10px">BEST</div>
+      <div class="GoBestVal" id="GoBestVal">0</div>
+    </div>
+    <div id="NewHighBadge">NEW HIGH SCORE!</div>
+    <div class="PressStart">Press Space or Click to Restart</div>
+  </div>
 
-            if (newHead.x === food.x && newHead.y === food.y) {
-                food = {
-                    x: Math.floor(Math.random() * 20) * box,
-                    y: Math.floor(Math.random() * 20) * box
-                };
-            } else {
-                snake.pop();
-            }
+  <div id="Flash"></div>
 
-            if (newHead.x < 0 || newHead.y < 0 || newHead.x >= canvas.width || newHead.y >= canvas.height ||
-                snake.some(part => part.x === newHead.x && part.y === newHead.y)) {
-                clearInterval(gameLoop);
-                alert("Game Over!");
-                return;
-            }
+  <canvas id="GameCanvas"></canvas>
 
-            snake.unshift(newHead);
-        }
-
-        let gameLoop = setInterval(drawGame, 150);
-    </script>
+  <script type="module" src="Scripts/Main.js"></script>
 </body>
 </html>

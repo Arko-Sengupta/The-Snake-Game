@@ -1,0 +1,286 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #050510;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+  color: #fff;
+  user-select: none;
+}
+
+#GameCanvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#Hud {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#ScoreDisplay {
+  position: absolute;
+  top: 22px; left: 28px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #00ffee;
+  text-shadow: 0 0 8px #00ffee, 0 0 20px #00ffee88, 0 0 40px #00ffee44;
+  letter-spacing: 2px;
+  line-height: 1.1;
+}
+#ScoreDisplay .Lbl { font-size: 0.7rem; opacity: 0.65; display: block; letter-spacing: 3px; }
+
+#BestDisplay {
+  position: absolute;
+  top: 22px; right: 28px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ff00cc;
+  text-shadow: 0 0 8px #ff00cc, 0 0 20px #ff00cc88, 0 0 40px #ff00cc44;
+  letter-spacing: 2px;
+  text-align: right;
+  line-height: 1.1;
+}
+#BestDisplay .Lbl { font-size: 0.7rem; opacity: 0.65; display: block; letter-spacing: 3px; }
+
+#LevelDisplay {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffee00;
+  text-shadow: 0 0 8px #ffee00, 0 0 20px #ffee0088, 0 0 40px #ffee0044;
+  letter-spacing: 4px;
+  text-align: center;
+  line-height: 1.1;
+}
+#LevelDisplay .Lbl { font-size: 0.7rem; opacity: 0.65; display: block; letter-spacing: 3px; }
+
+#ComboDisplay {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ff8800;
+  text-shadow: 0 0 10px #ff8800, 0 0 25px #ff880088;
+  letter-spacing: 3px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  white-space: nowrap;
+}
+
+#ProgressWrap {
+  position: absolute;
+  bottom: 28px; left: 28px;
+  width: 220px;
+}
+#ProgressLabel {
+  font-size: 0.68rem;
+  color: #00ffee99;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+#ProgressBarBg {
+  width: 100%;
+  height: 6px;
+  background: #ffffff15;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #00ffee33;
+}
+#ProgressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffee, #00aaff);
+  box-shadow: 0 0 8px #00ffeeaa;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+#LevelUpMsg {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #ffee00;
+  text-shadow: 0 0 15px #ffee00, 0 0 40px #ffee00aa, 0 0 80px #ffee0055;
+  letter-spacing: 6px;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#Flash {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 20;
+  transition: background 0.06s linear;
+}
+
+.Screen {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 16, 0.82);
+  z-index: 30;
+  backdrop-filter: blur(3px);
+}
+
+#StartScreen .GameTitle {
+  font-size: clamp(4rem, 13vw, 9rem);
+  font-weight: 900;
+  letter-spacing: 16px;
+  color: #00ffee;
+  text-shadow:
+    0 0 10px #00ffee,
+    0 0 30px #00ffeecc,
+    0 0 70px #00ffee88,
+    0 0 140px #00ffee44;
+  animation: flicker 3.8s infinite;
+  line-height: 1;
+}
+#StartScreen .Subtitle {
+  font-size: clamp(0.7rem, 1.8vw, 1.1rem);
+  letter-spacing: 8px;
+  color: #ffffff55;
+  margin-top: 12px;
+  margin-bottom: 64px;
+  text-transform: uppercase;
+}
+.PressStart {
+  font-size: clamp(0.8rem, 1.8vw, 1.1rem);
+  letter-spacing: 4px;
+  color: #ffffff88;
+  animation: blink 1.15s step-end infinite;
+  text-transform: uppercase;
+}
+.ControlsHint {
+  position: absolute;
+  bottom: 36px;
+  font-size: 0.68rem;
+  letter-spacing: 3px;
+  color: #ffffff2a;
+  text-align: center;
+}
+
+#GameoverScreen { display: none; }
+
+.GoTitle {
+  font-size: clamp(2.8rem, 10vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: #ff2244;
+  position: relative;
+  text-shadow: 0 0 20px #ff2244, 0 0 50px #ff224488;
+  animation: glitch 2s infinite;
+}
+.GoTitle::before,
+.GoTitle::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+}
+.GoTitle::before {
+  color: #00ffee;
+  animation: glitch-r 2s infinite;
+  clip-path: polygon(0 20%, 100% 20%, 100% 42%, 0 42%);
+}
+.GoTitle::after {
+  color: #ff00cc;
+  animation: glitch-b 2s infinite 0.05s;
+  clip-path: polygon(0 60%, 100% 60%, 100% 82%, 0 82%);
+}
+
+.GoScoreWrap {
+  margin: 38px 0 18px;
+  text-align: center;
+}
+.GoLbl {
+  font-size: 0.72rem;
+  letter-spacing: 4px;
+  color: #ffffff44;
+  margin-bottom: 2px;
+}
+.GoScoreVal {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #00ffee;
+  text-shadow: 0 0 15px #00ffee;
+  letter-spacing: 4px;
+}
+.GoBestVal {
+  font-size: 1.1rem;
+  color: #ff00cc;
+  text-shadow: 0 0 10px #ff00cc;
+  letter-spacing: 3px;
+  margin-top: 8px;
+}
+
+#NewHighBadge {
+  display: none;
+  font-size: 0.95rem;
+  letter-spacing: 4px;
+  color: #ffee00;
+  text-shadow: 0 0 15px #ffee00, 0 0 40px #ffee0088;
+  border: 1px solid #ffee0055;
+  padding: 8px 24px;
+  border-radius: 4px;
+  margin-bottom: 28px;
+  animation: pulse-badge 0.85s ease infinite alternate;
+}
+
+@keyframes flicker {
+  0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
+  20%,22%,24%,55% { opacity: 0.35; }
+}
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+@keyframes glitch {
+  0%,91%,100% { transform: translate(0); }
+  92% { transform: translate(-3px, 1px); }
+  93% { transform: translate(3px, -1px); }
+  94% { transform: translate(0); }
+  96% { transform: translate(2px, 2px); }
+  97% { transform: translate(-2px, -2px); }
+}
+@keyframes glitch-r {
+  0%,91%,100% { transform: translate(0); opacity: 0; }
+  92% { transform: translate(4px, -2px); opacity: 0.85; }
+  93% { transform: translate(-4px, 2px); opacity: 0.85; }
+  94% { opacity: 0; }
+}
+@keyframes glitch-b {
+  0%,92%,100% { transform: translate(0); opacity: 0; }
+  93% { transform: translate(-4px, 2px); opacity: 0.85; }
+  94% { transform: translate(4px, -2px); opacity: 0.85; }
+  95% { opacity: 0; }
+}
+@keyframes pulse-badge {
+  from { box-shadow: 0 0 10px #ffee0055; }
+  to   { box-shadow: 0 0 28px #ffee00cc; }
+}
+@keyframes level-up-anim {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0px) scale(0.6); }
+  12%  { opacity: 1; transform: translateX(-50%) translateY(-14px) scale(1.15); }
+  65%  { opacity: 1; transform: translateX(-50%) translateY(-32px) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-65px) scale(0.9); }
+}

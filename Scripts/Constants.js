@@ -1,0 +1,9 @@
+export const Grid = 20;
+export const Half = Grid / 2;
+export const BaseTick = 180;
+export const MinTick = 80;
+export const FoodsPerLevel = 5;
+export const LsKey = 'snakeThreeHighScore';
+export const HeadCol = 0x00ffcc;
+export const TailCol = 0x00aa77;
+export const HeadEmit = 0x00cc99;
