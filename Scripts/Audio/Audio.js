@@ -30,3 +30,5 @@ export const SndEat = () => { Tone({ Freq: 440, Dur: 0.15, Gain: 0.15 }); Tone({
 export const SndCombo = (C) => Tone({ Freq: 220 * C, Dur: 0.2, Gain: 0.12 });
 export const SndLevelUp = () => [261.63, 329.63, 392, 523.25].forEach((F, I) => Tone({ Freq: F, Dur: 0.18, Gain: 0.13, Delay: I * 0.1 }));
 export const SndDeath = () => Tone({ Type: 'sawtooth', Freq: 400, EndFreq: 50, Dur: 0.8, Gain: 0.18 });
+export const SndBonusSpawn = () => [523.25, 659.25, 783.99, 1046.5].forEach((F, I) => Tone({ Freq: F, Dur: 0.12, Gain: 0.1, Delay: I * 0.07 }));
+export const SndBonusEat = () => { [523.25, 783.99, 1046.5, 1318.5].forEach((F, I) => Tone({ Freq: F, Dur: 0.18, Gain: 0.16, Delay: I * 0.06 })); };

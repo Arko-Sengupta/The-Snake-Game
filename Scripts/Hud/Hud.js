@@ -5,6 +5,13 @@ const ComboDisplayEl = document.getElementById('ComboDisplay');
 const ProgressLabelEl = document.getElementById('ProgressLabel');
 const ProgressBarFillEl = document.getElementById('ProgressBarFill');
 const LevelUpMsgEl = document.getElementById('LevelUpMsg');
+const BonusHudEl = document.getElementById('BonusHud');
+const BonusCountdownEl = document.getElementById('BonusCountdown');
+const BonusBarFillEl = document.getElementById('BonusBarFill');
+
+let BonusIntervalId = null;
+let BonusStartMs = 0;
+let BonusTotalMs = 0;
 
 export const UpdateHud = (Score, Best, Level, FoodsInLevel, FoodsPerLevelCount) => {
   ScoreValEl.textContent = Score;
@@ -27,4 +34,24 @@ export const ShowLevelUp = () => {
   LevelUpMsgEl.style.animation = 'none';
   void LevelUpMsgEl.offsetHeight;
   LevelUpMsgEl.style.animation = 'level-up-anim 1.5s ease forwards';
+};
+
+export const ShowBonusHud = (DurationMs) => {
+  BonusStartMs = performance.now();
+  BonusTotalMs = DurationMs;
+  BonusHudEl.style.display = 'flex';
+  BonusHudEl.classList.remove('Urgent');
+  clearInterval(BonusIntervalId);
+  BonusIntervalId = setInterval(() => {
+    const Remaining = Math.max(0, BonusTotalMs - (performance.now() - BonusStartMs));
+    BonusCountdownEl.textContent = Math.ceil(Remaining / 1000);
+    BonusBarFillEl.style.width = (Remaining / BonusTotalMs * 100) + '%';
+    if (Remaining <= 3000) BonusHudEl.classList.add('Urgent');
+  }, 100);
+};
+
+export const HideBonusHud = () => {
+  clearInterval(BonusIntervalId);
+  BonusHudEl.style.display = 'none';
+  BonusHudEl.classList.remove('Urgent');
 };

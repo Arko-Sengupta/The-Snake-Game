@@ -50,6 +50,7 @@ const Animate = () => {
   }
 
   if (State.FoodVis) State.FoodVis.Tick(T);
+  if (State.BonusFoodVis) State.BonusFoodVis.Tick(T);
 
   TickParticles();
   Composer.render();

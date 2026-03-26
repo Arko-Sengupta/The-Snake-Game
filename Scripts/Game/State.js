@@ -20,4 +20,8 @@ export const State = {
   OrbitAng: 0,
   SnakeVis: null,
   FoodVis: null,
+  BonusFood: null,
+  BonusFoodVis: null,
+  BonusFoodTimer: null,
+  BonusSpawnTimer: null,
 };

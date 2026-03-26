@@ -7,3 +7,6 @@ export const LsKey = 'snakeThreeHighScore';
 export const HeadCol = 0x00ffcc;
 export const TailCol = 0x00aa77;
 export const HeadEmit = 0x00cc99;
+export const BonusSpawnDelay = 20000;
+export const BonusDuration = 8000;
+export const BonusBasePoints = 50;

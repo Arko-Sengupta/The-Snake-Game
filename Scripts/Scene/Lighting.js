@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Scene } from './Renderer.js';
+import { BonusLight } from '../Visuals/BonusFoodVisuals.js';
 
 export const HeadLight = new THREE.PointLight(0x00ffcc, 1.0, 6);
 export const FoodLight = new THREE.PointLight(0xff44cc, 1.5, 5);
@@ -15,4 +16,5 @@ export const InitLighting = () => {
 
   Scene.add(HeadLight);
   Scene.add(FoodLight);
+  Scene.add(BonusLight);
 };

@@ -1,11 +1,12 @@
 import { State } from './State.js';
-import { Grid, BaseTick, MinTick, FoodsPerLevel, LsKey } from '../Constants.js';
+import { Grid, BaseTick, MinTick, FoodsPerLevel, LsKey, BonusSpawnDelay, BonusDuration, BonusBasePoints } from '../Constants.js';
 import { C2W } from '../Utils.js';
 import { SnakeVisuals } from '../Visuals/SnakeVisuals.js';
 import { FoodVisuals } from '../Visuals/FoodVisuals.js';
+import { BonusFoodVisuals } from '../Visuals/BonusFoodVisuals.js';
 import { Burst } from '../Visuals/Particles.js';
-import { SndMove, SndEat, SndCombo, SndLevelUp, SndDeath } from '../Audio/Audio.js';
-import { UpdateHud, ShowComboHud, ShowLevelUp } from '../Hud/Hud.js';
+import { SndMove, SndEat, SndCombo, SndLevelUp, SndDeath, SndBonusSpawn, SndBonusEat } from '../Audio/Audio.js';
+import { UpdateHud, ShowComboHud, ShowLevelUp, ShowBonusHud, HideBonusHud } from '../Hud/Hud.js';
 
 const FlashEl = document.getElementById('Flash');
 const PauseScreenEl = document.getElementById('PauseScreen');
@@ -15,8 +16,57 @@ const GoBestValEl = document.getElementById('GoBestVal');
 const NewHighBadgeEl = document.getElementById('NewHighBadge');
 const StartScreenEl = document.getElementById('StartScreen');
 
+const AddScore = (Pts) => {
+  State.Score += Pts;
+  if (State.Score > State.Best) {
+    State.Best = State.Score;
+    try { localStorage.setItem(LsKey, State.Best); } catch (E) {}
+  }
+};
+
+export const DespawnBonusFood = () => {
+  if (State.BonusFoodVis) {
+    State.BonusFoodVis.Destroy();
+    State.BonusFoodVis = null;
+  }
+  State.BonusFood = null;
+  clearTimeout(State.BonusFoodTimer);
+  State.BonusFoodTimer = null;
+  HideBonusHud();
+};
+
+const ScheduleNextBonus = () => {
+  clearTimeout(State.BonusSpawnTimer);
+  State.BonusSpawnTimer = setTimeout(SpawnBonusFood, BonusSpawnDelay);
+};
+
+export const SpawnBonusFood = () => {
+  if (State.GameState !== 'playing') return;
+  if (State.BonusFoodVis) return;
+
+  const Taken = new Set(State.Snake.map(S => `${S.X},${S.Y}`));
+  if (State.Food) Taken.add(`${State.Food.X},${State.Food.Y}`);
+  const Free = [];
+  for (let X = 0; X < Grid; X++)
+    for (let Y = 0; Y < Grid; Y++)
+      if (!Taken.has(`${X},${Y}`)) Free.push({ X, Y });
+  if (!Free.length) { ScheduleNextBonus(); return; }
+
+  State.BonusFood = Free[Math.floor(Math.random() * Free.length)];
+  State.BonusFoodVis = new BonusFoodVisuals();
+  State.BonusFoodVis.Place(State.BonusFood.X, State.BonusFood.Y);
+  SndBonusSpawn();
+  ShowBonusHud(BonusDuration);
+
+  State.BonusFoodTimer = setTimeout(() => {
+    DespawnBonusFood();
+    ScheduleNextBonus();
+  }, BonusDuration);
+};
+
 export const SpawnFood = () => {
   const Taken = new Set(State.Snake.map(S => `${S.X},${S.Y}`));
+  if (State.BonusFood) Taken.add(`${State.BonusFood.X},${State.BonusFood.Y}`);
   const Free = [];
   for (let X = 0; X < Grid; X++)
     for (let Y = 0; Y < Grid; Y++)
@@ -52,6 +102,9 @@ export const InitGame = () => {
   State.FoodVis = new FoodVisuals();
   SpawnFood();
 
+  DespawnBonusFood();
+  ScheduleNextBonus();
+
   UpdateHud(State.Score, State.Best, State.Level, State.FoodsInLevel, FoodsPerLevel);
   clearInterval(State.TickTimer);
   State.TickTimer = setInterval(GameTick, State.TickMs);
@@ -72,6 +125,8 @@ export const GameTick = () => {
 
   if (Nx === State.Food.X && Nz === State.Food.Y) {
     Eat();
+  } else if (State.BonusFood && Nx === State.BonusFood.X && Nz === State.BonusFood.Y) {
+    EatBonus();
   } else {
     State.Snake.pop();
   }
@@ -94,14 +149,7 @@ export const Eat = () => {
   }
   State.LastEatMs = Now;
 
-  const Pts = 10 * State.Combo * State.Level;
-  State.Score += Pts;
-  if (State.Score > State.Best) {
-    State.Best = State.Score;
-    try {
-      localStorage.setItem(LsKey, State.Best);
-    } catch (E) {}
-  }
+  AddScore(10 * State.Combo * State.Level);
 
   const Wp = C2W(State.Food.X, State.Food.Y);
   Burst(Wp.x, Wp.z);
@@ -121,9 +169,24 @@ export const Eat = () => {
   UpdateHud(State.Score, State.Best, State.Level, State.FoodsInLevel, FoodsPerLevel);
 };
 
+export const EatBonus = () => {
+  const Wp = C2W(State.BonusFood.X, State.BonusFood.Y);
+  Burst(Wp.x, Wp.z);
+  Burst(Wp.x, Wp.z);
+
+  AddScore(BonusBasePoints * State.Combo * State.Level);
+  SndBonusEat();
+
+  DespawnBonusFood();
+  ScheduleNextBonus();
+  UpdateHud(State.Score, State.Best, State.Level, State.FoodsInLevel, FoodsPerLevel);
+};
+
 export const Die = () => {
   State.GameState = 'dead';
   clearInterval(State.TickTimer);
+  clearTimeout(State.BonusSpawnTimer);
+  DespawnBonusFood();
   SndDeath();
 
   FlashEl.style.background = '#ff000066';
@@ -146,11 +209,14 @@ export const TogglePause = () => {
   if (State.GameState === 'playing') {
     State.GameState = 'paused';
     clearInterval(State.TickTimer);
+    clearTimeout(State.BonusSpawnTimer);
+    DespawnBonusFood();
     PauseScreenEl.style.display = 'flex';
   } else if (State.GameState === 'paused') {
     State.GameState = 'playing';
     PauseScreenEl.style.display = 'none';
     State.TickTimer = setInterval(GameTick, State.TickMs);
+    ScheduleNextBonus();
   }
 };
 

@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
   <title>Snake — Three.js Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="Styles/Main.css" />
   <script type="importmap">
   {
@@ -35,30 +38,48 @@
       <div id="ProgressBarBg"><div id="ProgressBarFill"></div></div>
     </div>
     <div id="LevelUpMsg">LEVEL UP!</div>
+    <button id="MobilePauseBtn" aria-label="Pause">⏸</button>
+    <div id="BonusHud" style="display:none">
+      <div id="BonusIcon">★</div>
+      <div id="BonusInfo">
+        <div id="BonusLabel">BONUS FOOD</div>
+        <div id="BonusCountdown">8</div>
+      </div>
+      <div id="BonusBarBg"><div id="BonusBarFill"></div></div>
+    </div>
   </div>
 
   <div class="Screen" id="StartScreen">
     <div class="GameTitle">SNAKE</div>
     <div class="Subtitle">Three.js Edition</div>
+    <div class="StartDivider"></div>
     <div class="PressStart">Press Space or Click to Start</div>
-    <div class="ControlsHint">WASD / ARROW KEYS TO MOVE | SPACE TO PAUSE</div>
+    <div class="ControlsHint DesktopHint">WASD / ARROW KEYS TO MOVE | SPACE TO PAUSE</div>
+    <div class="ControlsHint MobileHint">SWIPE TO MOVE | TAP TO START | PAUSE BUTTON TO PAUSE</div>
   </div>
 
   <div class="Screen" id="PauseScreen" style="display:none">
-    <div style="font-size:clamp(3rem,10vw,6rem);font-weight:900;letter-spacing:12px;color:#ffee00;text-shadow:0 0 12px #ffee00,0 0 30px #ffee0088;">PAUSED</div>
-    <div class="PressStart" style="margin-top:40px">Press Space to Resume</div>
+    <div class="PauseCard">
+      <div class="PauseTitle">PAUSED</div>
+      <div class="PressStart DesktopHint">Press Space to Resume</div>
+      <div class="PressStart MobileHint">Tap Anywhere to Resume</div>
+    </div>
   </div>
 
   <div class="Screen" id="GameoverScreen">
-    <div class="GoTitle" data-text="GAME OVER">GAME OVER</div>
-    <div class="GoScoreWrap">
-      <div class="GoLbl">SCORE</div>
-      <div class="GoScoreVal" id="GoScoreVal">0</div>
-      <div class="GoLbl" style="margin-top:10px">BEST</div>
-      <div class="GoBestVal" id="GoBestVal">0</div>
+    <div class="GoCard">
+      <div class="GoTitle" data-text="GAME OVER">GAME OVER</div>
+      <div class="GoDivider"></div>
+      <div class="GoScoreWrap">
+        <div class="GoLbl">SCORE</div>
+        <div class="GoScoreVal" id="GoScoreVal">0</div>
+        <div class="GoLbl" style="margin-top:12px">BEST</div>
+        <div class="GoBestVal" id="GoBestVal">0</div>
+      </div>
+      <div id="NewHighBadge">NEW HIGH SCORE!</div>
+      <div class="PressStart DesktopHint">Press Space or Click to Restart</div>
+      <div class="PressStart MobileHint">Tap Anywhere to Restart</div>
     </div>
-    <div id="NewHighBadge">NEW HIGH SCORE!</div>
-    <div class="PressStart">Press Space or Click to Restart</div>
   </div>
 
   <div id="Flash"></div>
