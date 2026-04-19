@@ -22,7 +22,7 @@ const Tone = ({ Type = 'sine', Freq = 440, EndFreq = null, Dur = 0.15, Gain = 0.
     G.gain.setValueAtTime(Gain, T);
     G.gain.exponentialRampToValueAtTime(0.0001, T + Dur);
     Osc.start(T); Osc.stop(T + Dur + 0.01);
-  } catch (E) {}
+  } catch (E) { }
 };
 
 export const SndMove = () => Tone({ Type: 'square', Freq: 80, Dur: 0.03, Gain: 0.03 });

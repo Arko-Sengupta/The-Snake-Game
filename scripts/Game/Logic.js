@@ -20,7 +20,7 @@ const AddScore = (Pts) => {
   State.Score += Pts;
   if (State.Score > State.Best) {
     State.Best = State.Score;
-    try { localStorage.setItem(LsKey, State.Best); } catch (E) {}
+    try { localStorage.setItem(LsKey, State.Best); } catch (E) { }
   }
 };
 

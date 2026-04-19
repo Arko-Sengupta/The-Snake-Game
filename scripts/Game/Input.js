@@ -12,7 +12,7 @@ const OnTouchStart = (E) => {
     const Touch = E.changedTouches[0];
     TouchStartX = Touch.clientX;
     TouchStartY = Touch.clientY;
-  } catch (Err) {}
+  } catch (Err) { }
 };
 
 const OnTouchEnd = (E) => {
@@ -38,15 +38,15 @@ const OnTouchEnd = (E) => {
     if (Dist >= SwipeThreshold) {
       AbsDx > AbsDy ? TryDir(Dx > 0 ? 1 : -1, 0) : TryDir(0, Dy > 0 ? 1 : -1);
     }
-  } catch (Err) {}
+  } catch (Err) { }
 };
 
 export const InitInput = () => {
   document.addEventListener('keydown', (E) => {
     switch (E.code) {
-      case 'ArrowUp':    case 'KeyW': TryDir(0, -1); break;
-      case 'ArrowDown':  case 'KeyS': TryDir(0, 1); break;
-      case 'ArrowLeft':  case 'KeyA': TryDir(-1, 0); break;
+      case 'ArrowUp': case 'KeyW': TryDir(0, -1); break;
+      case 'ArrowDown': case 'KeyS': TryDir(0, 1); break;
+      case 'ArrowLeft': case 'KeyA': TryDir(-1, 0); break;
       case 'ArrowRight': case 'KeyD': TryDir(1, 0); break;
       case 'Space':
         E.preventDefault();
@@ -67,13 +67,13 @@ export const InitInput = () => {
         E.preventDefault();
         E.stopPropagation();
         if (State.GameState === 'playing' || State.GameState === 'paused') TogglePause();
-      } catch (Err) {}
+      } catch (Err) { }
     });
     PauseBtn.addEventListener('click', (E) => {
       try {
         E.stopPropagation();
         if (State.GameState === 'playing' || State.GameState === 'paused') TogglePause();
-      } catch (Err) {}
+      } catch (Err) { }
     });
   }
 };
